@@ -11,7 +11,15 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var messages = [];
+var fs = require('fs');
+var path = require('path');
+
+var dataBackup = fs.readFileSync("data.txt", {encoding: "utf8"}, function(err, data) {
+  console.log(data)
+});
+
+var data = JSON.parse(dataBackup);
+var messages = data.results || [];
 var defaultCorsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -80,6 +88,10 @@ module.exports.requestHandler = function (request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+  fs.writeFile('data.txt', JSON.stringify(sampleObject), function() {
+    console.log("overwritten")
+  });
+  // response.write(JSON.stringify(sampleObject))
   response.end(JSON.stringify(sampleObject));
 
 };
